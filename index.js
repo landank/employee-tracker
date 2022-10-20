@@ -1,16 +1,6 @@
 const { prompt, default: inquirer } = require('inquirer');
-const mysql = require('mysql2');
+const db = require('./db/connection');
 require('console.table');
-
-const db = mysql.createConnection(
-    {
-        host: 'localhost',
-        user: 'root',
-        password: 'BlueMoon',
-        database: 'employees'
-    },
-    
-).promise();
 
 const viewEmployees = async () => {
     const [employeeData] = await db.query(`SELECT * FROM employee`);
@@ -156,74 +146,79 @@ const updateEmployee = async () => {
 };
 
 const mainMenu = async () => {
-    const { choice } = await prompt([
-        {
-            type: 'list',
-            name: 'choice',
-            message: 'Select an Option to Proceed',
-            choices: [
-                {
-                    name: 'View All Employees',
-                    value: 'VIEW_EMPLOYEES'
-                },
-                {
-                    name: 'Add a New Employee',
-                    value: 'ADD_EMPLOYEE'
-                },
-                {
-                    name: 'Update An Employees Role',
-                    value: 'UPDATE_EMPLOYEE'
-                },
-                {
-                    name: 'View All Listed Departments',
-                    value: 'VIEW_DEPARTMENTS'
-                },
-                {
-                    name: 'View All Listed Roles',
-                    value: 'VIEW_ROLES'
-                },
-                {
-                    name: 'Add a  New Department',
-                    value: 'ADD_DEPARTMENT'
-                },
-                {
-                    name: 'Add a New Role',
-                    value: 'ADD_ROLE'
-                },
-                {
-                    name: 'Exit Menu',
-                    value: 'EXIT'
-                }
-            ]
-        }
-    ]);
+    try {
+        const { choice } = await prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'Select an Option to Proceed',
+                choices: [
+                    {
+                        name: 'View All Employees',
+                        value: 'VIEW_EMPLOYEES'
+                    },
+                    {
+                        name: 'Add a New Employee',
+                        value: 'ADD_EMPLOYEE'
+                    },
+                    {
+                        name: 'Update An Employees Role',
+                        value: 'UPDATE_EMPLOYEE'
+                    },
+                    {
+                        name: 'View All Listed Departments',
+                        value: 'VIEW_DEPARTMENTS'
+                    },
+                    {
+                        name: 'View All Listed Roles',
+                        value: 'VIEW_ROLES'
+                    },
+                    {
+                        name: 'Add a  New Department',
+                        value: 'ADD_DEPARTMENT'
+                    },
+                    {
+                        name: 'Add a New Role',
+                        value: 'ADD_ROLE'
+                    },
+                    {
+                        name: 'Exit Menu',
+                        value: 'EXIT'
+                    }
+                ]
+            }
+        ]);
 
-switch (choice) {
-    case 'VIEW_EMPLOYEES':
-        viewEmployees();
-        break;
-    case 'VIEW_DEPARTMENTS':
-        viewDepartments();
-        break;
-    case 'VIEW_ROLES':
-        viewRoles();
-        break;
-    case "ADD_EMPLOYEE":
-        addEmployee();
-        break;
-    case "UPDATE_EMPLOYEE":
-        updateEmployee();
-        break;
-    case "ADD_DEPARTMENT":
-        addDepartment();
-        break;
-    case "ADD_ROLE":
-        addRole();
-    case 'EXIT':
-        process.exit();
-        break;
-    default:
-        process.exit();
+        switch (choice) {
+            case 'VIEW_EMPLOYEES':
+                viewEmployees();
+                break;
+            case 'VIEW_DEPARTMENTS':
+                viewDepartments();
+                break;
+            case 'VIEW_ROLES':
+                viewRoles();
+                break;
+            case "ADD_EMPLOYEE":
+                addEmployee();
+                break;
+            case "UPDATE_EMPLOYEE":
+                updateEmployee();
+                break;
+            case "ADD_DEPARTMENT":
+                addDepartment();
+                break;
+            case "ADD_ROLE":
+                addRole();
+            case 'EXIT':
+                process.exit();
+                break;
+            default:
+                process.exit();
+        };
+    } catch (err) {
+        console.log(err);
+    }
 };
-};
+
 mainMenu();
